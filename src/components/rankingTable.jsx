@@ -1,47 +1,42 @@
-import React, { useState, useEffect } from 'react';
+const RankingTable = ({ previousLog, currentLog }) => {
+  const sortedAgents = [...currentLog].sort((a, b) => b.score - a.score);
 
-const RankingTable = ({ data }) => {
-  // Create state to store sorted data and current rankings
-  const [rankings, setRankings] = useState([]);
-
-  useEffect(() => {
-    // Sort the data based on user scores in descending order
-    const sorted = [...data].sort((a, b) => b.score - a.score);
-
-    // Calculate the rankings and number of steps moved
-    const newRankings = sorted.map((item, index) => {
-      const previousIndex = data.findIndex((d) => d.id === item.id);
-      const diff = previousIndex - index;
-      return {
-        ...item,
-        rank: index + 1,
-        diff,
-      };
-    });
-    setRankings(newRankings);
-  }, [data]);
+  // create an object to map agent IDs to their previous ranking
+  const previousRankings = {};
+  previousLog.forEach((agent, index) => {
+    previousRankings[agent.agent_id] = index + 1;
+  });
 
   return (
-    <table>
-      <thead>
-        <tr>
-          <th>Rank</th>
-          <th>Name</th>
-          <th>Score</th>
-          <th>Change</th>
-        </tr>
-      </thead>
-      <tbody>
-        {rankings.map((item) => (
-          <tr key={item.id}>
-            <td>{item.rank}</td>
-            <td>{item.name}</td>
-            <td>{item.score}</td>
-            <td>{item.diff}</td>
+    <div>
+      <h1>Agent Ranking</h1>
+      <table>
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Agent</th>
+            <th>Previous Rank</th>
+            <th>Score</th>
+            <th>Change</th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {sortedAgents.map((agent, index) => {
+            const previousRank = previousRankings[agent.agent_id];
+            const change = previousRank ? previousRank - (index + 1) : '-';
+            return (
+              <tr key={agent.agent_id}>
+                <td>{index + 1}</td>
+                <td>{agent.first_name}</td>
+                <td>{previousRank || '-'}</td>
+                <td>{agent.score}</td>
+                <td>{change}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
   );
 };
 
