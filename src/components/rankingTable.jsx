@@ -7,6 +7,8 @@ const RankingTable = ({ previousLog, currentLog }) => {
     previousRankings[agent.agent_id] = index + 1;
   });
 
+  console.log('here');
+
   return (
     <div>
       <h1>Agent Ranking</h1>
